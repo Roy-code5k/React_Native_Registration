@@ -9,6 +9,8 @@ import {
   Alert,
   Platform,
   SafeAreaView,
+  TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { COLORS } from '../constants/theme';
@@ -53,10 +55,8 @@ export default function CompetitionDetailsScreen() {
   const [videoModal, setVideoModal] = useState({ visible: false, url: '', title: '' });
   const [submissionModalVisible, setSubmissionModalVisible] = useState(false);
 
-  // Auto-login demo user on mount
-  useEffect(() => {
-    handleSwitchUser('demo@example.com');
-  }, []);
+  // Initialize in Guest mode (unauthenticated)
+  // Users can log in or sign up via Profile or Register Now
 
   const handleSwitchUser = async (email) => {
     if (!email) {
