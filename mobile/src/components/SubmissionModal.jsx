@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -92,21 +93,32 @@ export default function SubmissionModal({ visible, onClose, onSubmit, competitio
 
             {/* Action Buttons */}
             <View style={styles.actionRow}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={onClose} disabled={isSubmitting}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.cancelBtn,
+                  pressed && !isSubmitting && { opacity: 0.7 },
+                ]}
+                onPress={!isSubmitting ? onClose : undefined}
+                accessibilityRole="button"
+              >
                 <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
+              </Pressable>
 
-              <TouchableOpacity
-                style={styles.submitBtn}
-                onPress={handleSubmit}
-                disabled={isSubmitting || !title.trim()}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.submitBtn,
+                  (!title.trim() || isSubmitting) && styles.submitBtnDisabled,
+                  pressed && !isSubmitting && title.trim() && { opacity: 0.85 },
+                ]}
+                onPress={!isSubmitting && title.trim() ? handleSubmit : undefined}
+                accessibilityRole="button"
               >
                 {isSubmitting ? (
                   <ActivityIndicator color={COLORS.white} size="small" />
                 ) : (
                   <Text style={styles.submitBtnText}>Submit Entry</Text>
                 )}
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -127,10 +139,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 20,
     paddingBottom: Platform.OS === 'ios' ? 36 : 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.15)',
     elevation: 10,
   },
   header: {

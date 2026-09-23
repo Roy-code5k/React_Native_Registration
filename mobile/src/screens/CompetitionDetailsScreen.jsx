@@ -33,9 +33,14 @@ import StickyBottomActionBar from '../components/StickyBottomActionBar';
 import SubmissionModal from '../components/SubmissionModal';
 import VideoModal from '../components/VideoModal';
 import DemoToolbar from '../components/DemoToolbar';
+import ProfileScreen from './ProfileScreen';
+import AuthScreen from './AuthScreen';
 
 export default function CompetitionDetailsScreen() {
   const queryClient = useQueryClient();
+
+  // Navigation view: 'competition' | 'profile' | 'auth'
+  const [currentView, setCurrentView] = useState('competition');
 
   // Selected competition slug
   const [competitionSlug, setCompetitionSlug] = useState('classical-dance-2026');
@@ -68,6 +73,20 @@ export default function CompetitionDetailsScreen() {
     } catch (err) {
       console.warn('Login failed, proceeding as guest:', err.message);
     }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setAuthToken(null);
+    queryClient.invalidateQueries({ queryKey: ['competition'] });
+    setCurrentView('auth');
+  };
+
+  const handleAuthSuccess = ({ user, token }) => {
+    setCurrentUser(user);
+    setAuthToken(token);
+    queryClient.invalidateQueries({ queryKey: ['competition'] });
+    setCurrentView('competition');
   };
 
   // Dynamic Query for Competition Details
@@ -149,7 +168,7 @@ export default function CompetitionDetailsScreen() {
   // Primary CTA click action
   const handleCtaPress = () => {
     if (!authToken) {
-      handleSwitchUser('demo@example.com');
+      setCurrentView('auth');
       return;
     }
 
@@ -168,6 +187,28 @@ export default function CompetitionDetailsScreen() {
   const handleOpenVideo = (url, title) => {
     setVideoModal({ visible: true, url, title });
   };
+
+  // Profile View
+  if (currentView === 'profile' && currentUser) {
+    return (
+      <ProfileScreen
+        user={currentUser}
+        onLogout={handleLogout}
+        onGoBack={() => setCurrentView('competition')}
+        onNavigateCompetitions={() => setCurrentView('competition')}
+      />
+    );
+  }
+
+  // Auth (Login / Sign Up) View
+  if (currentView === 'auth') {
+    return (
+      <AuthScreen
+        onAuthSuccess={handleAuthSuccess}
+        onCancel={() => setCurrentView('competition')}
+      />
+    );
+  }
 
   // Loading Screen
   if (isLoading && !competition) {
@@ -206,6 +247,7 @@ export default function CompetitionDetailsScreen() {
         onSelectCompetition={(slug) => setCompetitionSlug(slug)}
         onResetRegistration={handleResetRegistration}
         isRegistered={isRegistered}
+        onOpenAuthOrProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
       />
 
       {/* Top Header */}
@@ -279,6 +321,8 @@ export default function CompetitionDetailsScreen() {
         actions={competition?.actions}
         onPressAction={handleCtaPress}
         isLoading={registerMutation.isPending || submitMutation.isPending}
+        onNavigateProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
+        onNavigateCompetitions={() => setCurrentView('competition')}
       />
 
       {/* Submission Modal */}

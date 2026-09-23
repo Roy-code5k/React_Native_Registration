@@ -18,6 +18,10 @@ const connectDB = async () => {
 
     const conn = await mongoose.connect(mongoUri, {
       autoIndex: true,
+      maxPoolSize: 50, // Maintain up to 50 concurrent socket connections for high concurrency
+      minPoolSize: 5,  // Maintain a minimum pool of warm connections
+      serverSelectionTimeoutMS: 5000, // Fail fast if Atlas cluster is unreachable
+      socketTimeoutMS: 45000,
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);

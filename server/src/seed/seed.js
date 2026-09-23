@@ -23,7 +23,7 @@ const seedData = async () => {
       name: 'Demo Participant',
       email: 'demo@example.com',
       passwordHash: demoPasswordHash,
-      profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+      profileImage: '',
       referralCode: 'feed_demo123',
     });
 
@@ -31,7 +31,7 @@ const seedData = async () => {
       name: 'Pooja Sharma',
       email: 'pooja@example.com',
       passwordHash: demoPasswordHash,
-      profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=250&q=80',
+      profileImage: '',
       referralCode: 'feed_pooja88',
     });
 
@@ -39,7 +39,7 @@ const seedData = async () => {
       name: 'Rohan Gupta',
       email: 'rohan@example.com',
       passwordHash: demoPasswordHash,
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
+      profileImage: '',
       referralCode: 'feed_rohan42',
     });
 
@@ -96,12 +96,6 @@ const seedData = async () => {
           position: '2nd Winner',
           image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
           video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        },
-        {
-          name: 'Ishita Chouhan',
-          position: '3rd Winner',
-          image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
-          video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
         },
       ],
       description:

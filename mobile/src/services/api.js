@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-// On Android emulator, localhost is 10.0.2.2. On Web or iOS simulator, localhost is 127.0.0.1.
+// On physical mobile device over Wi-Fi, connect to computer's local IP (10.20.18.138)
 const getDefaultBaseUrl = () => {
-  if (Platform.OS === 'android') {
-    return 'http://10.0.2.2:5000/api/v1';
+  if (Platform.OS === 'web') {
+    return 'http://localhost:5000/api/v1';
   }
-  return 'http://localhost:5000/api/v1';
+  return 'http://10.20.18.138:5000/api/v1';
 };
 
 export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || getDefaultBaseUrl();
@@ -43,6 +43,17 @@ export const submitEntry = async (id, payload, token) => {
 export const listAllCompetitions = async () => {
   const response = await api.get('/competitions');
   return response.data.data;
+};
+
+export const registerUser = async (name, email, password) => {
+  const response = await api.post('/auth/register', { name, email, password });
+  return response.data.data;
+};
+
+export const getCurrentUser = async (token) => {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await api.get('/auth/me', { headers });
+  return response.data.data.user;
 };
 
 export const login = async (email, password) => {

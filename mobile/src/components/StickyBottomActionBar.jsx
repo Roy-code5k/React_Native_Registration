@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable, ActivityIndicator, Image } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 
@@ -9,6 +9,8 @@ export default function StickyBottomActionBar({
   actions,
   onPressAction,
   isLoading,
+  onNavigateProfile,
+  onNavigateCompetitions,
 }) {
   const isRegistered = userState?.isRegistered;
   const submissionStatus = userState?.submissionStatus;
@@ -95,17 +97,17 @@ export default function StickyBottomActionBar({
     <View style={styles.wrapper}>
       {/* Dynamic CTA Button */}
       <View style={styles.actionContainer}>
-        <TouchableOpacity
-          style={[
+        <Pressable
+          style={({ pressed }) => [
             styles.ctaButton,
             isButtonDisabled && styles.ctaDisabled,
+            pressed && !isButtonDisabled && { opacity: 0.85 },
           ]}
-          onPress={onPressAction}
-          disabled={isButtonDisabled}
-          activeOpacity={0.85}
+          onPress={!isButtonDisabled ? onPressAction : undefined}
+          accessibilityRole="button"
         >
           {renderCtaContent()}
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Global App Bottom Navigation Bar */}
@@ -126,16 +128,22 @@ export default function StickyBottomActionBar({
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.navItem} onPress={onNavigateCompetitions} activeOpacity={0.7}>
           <Ionicons name="trophy" size={20} color={COLORS.primary} />
           <Text style={[styles.navLabel, styles.navLabelActive]}>Competitions</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' }}
-            style={styles.profileAvatar}
-          />
+        <TouchableOpacity style={styles.navItem} onPress={onNavigateProfile} activeOpacity={0.7}>
+          {userState?.user?.profileImage ? (
+            <Image
+              source={{ uri: userState.user.profileImage }}
+              style={styles.profileAvatar}
+            />
+          ) : (
+            <View style={styles.navAvatarPlaceholder}>
+              <Ionicons name="person" size={13} color={COLORS.textMuted} />
+            </View>
+          )}
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
       </View>
@@ -148,10 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderTopWidth: 1,
     borderTopColor: COLORS.borderLight,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
+    boxShadow: '0px -2px 5px rgba(0, 0, 0, 0.05)',
     elevation: 6,
   },
   actionContainer: {
@@ -232,15 +237,20 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.35,
-    shadowRadius: 5,
+    boxShadow: '0px 3px 6px rgba(15, 107, 114, 0.35)',
     elevation: 4,
   },
   profileAvatar: {
     width: 20,
     height: 20,
     borderRadius: 10,
+  },
+  navAvatarPlaceholder: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

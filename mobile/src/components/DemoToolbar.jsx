@@ -10,6 +10,7 @@ export default function DemoToolbar({
   onSelectCompetition,
   onResetRegistration,
   isRegistered,
+  onOpenAuthOrProfile,
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -69,6 +70,17 @@ export default function DemoToolbar({
             >
               <Text style={[styles.btnText, !currentUser && styles.btnTextActive]}>Guest</Text>
             </TouchableOpacity>
+
+            {onOpenAuthOrProfile && (
+              <TouchableOpacity
+                style={[styles.smallBtn, { backgroundColor: '#0284C7' }]}
+                onPress={onOpenAuthOrProfile}
+              >
+                <Text style={[styles.btnText, { color: COLORS.white, fontWeight: '700' }]}>
+                  {currentUser ? '👤 Profile' : '🔑 Log In'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* Competition Switcher */}

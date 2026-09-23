@@ -35,17 +35,11 @@ export const FONTS = {
 
 export const SHADOWS = {
   card: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
+    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)',
     elevation: 2,
   },
   cta: {
-    shadowColor: '#0F6B72',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
+    boxShadow: '0px 4px 8px rgba(15, 107, 114, 0.25)',
     elevation: 4,
   },
 };
