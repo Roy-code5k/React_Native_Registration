@@ -11,6 +11,7 @@ export default function StickyBottomActionBar({
   isLoading,
   onNavigateProfile,
   onNavigateCompetitions,
+  onNavigateHome,
 }) {
   const isRegistered = userState?.isRegistered;
   const submissionStatus = userState?.submissionStatus;
@@ -112,7 +113,7 @@ export default function StickyBottomActionBar({
 
       {/* Global App Bottom Navigation Bar */}
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.navItem} onPress={onNavigateHome} activeOpacity={0.7}>
           <Ionicons name="home-outline" size={20} color={COLORS.textMuted} />
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>

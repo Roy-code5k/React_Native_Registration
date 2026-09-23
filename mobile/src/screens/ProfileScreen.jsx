@@ -12,7 +12,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 
-export default function ProfileScreen({ user, onLogout, onGoBack, onNavigateCompetitions }) {
+export default function ProfileScreen({
+  user,
+  onLogout,
+  onGoBack,
+  onNavigateCompetitions,
+  onNavigateHome,
+}) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -116,7 +122,7 @@ export default function ProfileScreen({ user, onLogout, onGoBack, onNavigateComp
 
       {/* Bottom Navigation Bar */}
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem} onPress={onNavigateCompetitions} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.navItem} onPress={onNavigateHome} activeOpacity={0.7}>
           <Ionicons name="home-outline" size={20} color={COLORS.textMuted} />
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>

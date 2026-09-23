@@ -37,11 +37,12 @@ import VideoModal from '../components/VideoModal';
 import DemoToolbar from '../components/DemoToolbar';
 import ProfileScreen from './ProfileScreen';
 import AuthScreen from './AuthScreen';
+import HomeScreen from './HomeScreen';
 
 export default function CompetitionDetailsScreen() {
   const queryClient = useQueryClient();
 
-  // Navigation view: 'competition' | 'profile' | 'auth'
+  // Navigation view: 'home' | 'competition' | 'profile' | 'auth'
   const [currentView, setCurrentView] = useState('competition');
 
   // Selected competition slug
@@ -188,14 +189,30 @@ export default function CompetitionDetailsScreen() {
     setVideoModal({ visible: true, url, title });
   };
 
+  // Home View (Browse all competitions)
+  if (currentView === 'home') {
+    return (
+      <HomeScreen
+        currentUser={currentUser}
+        onSelectCompetition={(slug) => {
+          setCompetitionSlug(slug);
+          setCurrentView('competition');
+        }}
+        onNavigateProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
+        onNavigateAuth={() => setCurrentView('auth')}
+      />
+    );
+  }
+
   // Profile View
   if (currentView === 'profile' && currentUser) {
     return (
       <ProfileScreen
         user={currentUser}
         onLogout={handleLogout}
-        onGoBack={() => setCurrentView('competition')}
-        onNavigateCompetitions={() => setCurrentView('competition')}
+        onGoBack={() => setCurrentView('home')}
+        onNavigateCompetitions={() => setCurrentView('home')}
+        onNavigateHome={() => setCurrentView('home')}
       />
     );
   }
@@ -205,7 +222,7 @@ export default function CompetitionDetailsScreen() {
     return (
       <AuthScreen
         onAuthSuccess={handleAuthSuccess}
-        onCancel={() => setCurrentView('competition')}
+        onCancel={() => setCurrentView('home')}
       />
     );
   }
@@ -250,8 +267,8 @@ export default function CompetitionDetailsScreen() {
         onOpenAuthOrProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
       />
 
-      {/* Top Header */}
-      <TopHeader onGoBack={() => {}} />
+      {/* Top Header with Back to Home navigation */}
+      <TopHeader onGoBack={() => setCurrentView('home')} />
 
       {/* Scrollable Competition Details Body */}
       <ScrollView
@@ -321,8 +338,9 @@ export default function CompetitionDetailsScreen() {
         actions={competition?.actions}
         onPressAction={handleCtaPress}
         isLoading={registerMutation.isPending || submitMutation.isPending}
+        onNavigateHome={() => setCurrentView('home')}
         onNavigateProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
-        onNavigateCompetitions={() => setCurrentView('competition')}
+        onNavigateCompetitions={() => setCurrentView('home')}
       />
 
       {/* Submission Modal */}
