@@ -1,0 +1,18 @@
+{
+  "name": "feedants-competition-fullstack",
+  "version": "1.0.0",
+  "description": "Feedants Competition Details Screen - Functional Full-Stack Module",
+  "scripts": {
+    "server": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
+    "server:seed": "npm --prefix server run seed",
+    "server:test": "npm --prefix server test",
+    "mobile": "npm --prefix mobile start",
+    "mobile:web": "npm --prefix mobile run web",
+    "mobile:android": "npm --prefix mobile run android",
+    "mobile:ios": "npm --prefix mobile run ios"
+  },
+  "keywords": ["react-native", "expo", "express", "mongodb", "feedants", "full-stack"],
+  "author": "Full Stack Development Intern Candidate",
+  "license": "ISC"
+}
