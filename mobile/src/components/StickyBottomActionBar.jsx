@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable, ActivityIndicator, Image } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function StickyBottomActionBar({
   competition,
@@ -14,6 +15,7 @@ export default function StickyBottomActionBar({
   onNavigateHome,
   onNavigateExplore,
 }) {
+  const { t } = useLanguage();
   const isRegistered = userState?.isRegistered;
   const submissionStatus = userState?.submissionStatus;
   const lifecycle = competition?.lifecycle?.state;
@@ -28,8 +30,8 @@ export default function StickyBottomActionBar({
     if (submissionStatus === 'SUBMITTED' || submissionStatus === 'ACCEPTED') {
       return (
         <View style={styles.ctaTextContainer}>
-          <Text style={styles.ctaPrimaryText}>Submission Uploaded</Text>
-          <Text style={styles.ctaSubText}>Under Evaluation by Judge</Text>
+          <Text style={styles.ctaPrimaryText}>{t('sticky.submissionUploaded')}</Text>
+          <Text style={styles.ctaSubText}>{t('sticky.underEvaluation')}</Text>
         </View>
       );
     }
@@ -38,15 +40,15 @@ export default function StickyBottomActionBar({
       if (actions?.canSubmit) {
         return (
           <View style={styles.ctaTextContainer}>
-            <Text style={styles.ctaPrimaryText}>Upload Submission</Text>
-            <Text style={styles.ctaSubText}>Registered</Text>
+            <Text style={styles.ctaPrimaryText}>{t('sticky.uploadSubmission')}</Text>
+            <Text style={styles.ctaSubText}>{t('sticky.registered')}</Text>
           </View>
         );
       }
       return (
         <View style={styles.ctaTextContainer}>
-          <Text style={styles.ctaPrimaryText}>Registered</Text>
-          <Text style={styles.ctaSubText}>Submission Window Pending</Text>
+          <Text style={styles.ctaPrimaryText}>{t('sticky.registered')}</Text>
+          <Text style={styles.ctaSubText}>{t('sticky.submissionWindowPending')}</Text>
         </View>
       );
     }
@@ -54,7 +56,7 @@ export default function StickyBottomActionBar({
     if (actions?.canRegister) {
       return (
         <View style={styles.registerCtaContainer}>
-          <Text style={styles.ctaPrimaryText}>Register Now</Text>
+          <Text style={styles.ctaPrimaryText}>{t('sticky.registerNow')}</Text>
           <View style={styles.feeBadge}>
             <Text style={styles.feeBadgeText}>₹{entryFee}</Text>
           </View>
@@ -65,8 +67,8 @@ export default function StickyBottomActionBar({
     if (lifecycle === 'FULL' || actions?.reason === 'COMPETITION_FULL') {
       return (
         <View style={styles.ctaTextContainer}>
-          <Text style={styles.ctaPrimaryText}>Competition Full</Text>
-          <Text style={styles.ctaSubText}>No spots remaining</Text>
+          <Text style={styles.ctaPrimaryText}>{t('sticky.competitionFull')}</Text>
+          <Text style={styles.ctaSubText}>{t('sticky.noSpotsRemaining')}</Text>
         </View>
       );
     }
@@ -74,16 +76,16 @@ export default function StickyBottomActionBar({
     if (lifecycle === 'RESULT_PUBLISHED') {
       return (
         <View style={styles.ctaTextContainer}>
-          <Text style={styles.ctaPrimaryText}>View Results</Text>
-          <Text style={styles.ctaSubText}>Winners Announced</Text>
+          <Text style={styles.ctaPrimaryText}>{t('sticky.viewResults')}</Text>
+          <Text style={styles.ctaSubText}>{t('sticky.winnersAnnounced')}</Text>
         </View>
       );
     }
 
     return (
       <View style={styles.ctaTextContainer}>
-        <Text style={styles.ctaPrimaryText}>Registration Closed</Text>
-        <Text style={styles.ctaSubText}>Entry window has ended</Text>
+        <Text style={styles.ctaPrimaryText}>{t('sticky.registrationClosed')}</Text>
+        <Text style={styles.ctaSubText}>{t('sticky.entryWindowEnded')}</Text>
       </View>
     );
   };
@@ -116,12 +118,12 @@ export default function StickyBottomActionBar({
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navItem} onPress={onNavigateHome} activeOpacity={0.7}>
           <Ionicons name="home-outline" size={20} color={COLORS.textMuted} />
-          <Text style={styles.navLabel}>Home</Text>
+          <Text style={styles.navLabel}>{t('home')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={onNavigateExplore} activeOpacity={0.7}>
           <Ionicons name="search-outline" size={20} color={COLORS.textMuted} />
-          <Text style={styles.navLabel}>Explore</Text>
+          <Text style={styles.navLabel}>{t('explore')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.centerAddButton} activeOpacity={0.85}>
@@ -132,7 +134,7 @@ export default function StickyBottomActionBar({
 
         <TouchableOpacity style={styles.navItem} onPress={onNavigateCompetitions} activeOpacity={0.7}>
           <Ionicons name="trophy" size={20} color={COLORS.primary} />
-          <Text style={[styles.navLabel, styles.navLabelActive]}>Competitions</Text>
+          <Text style={[styles.navLabel, styles.navLabelActive]}>{t('competitions')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={onNavigateProfile} activeOpacity={0.7}>
@@ -146,7 +148,7 @@ export default function StickyBottomActionBar({
               <Ionicons name="person" size={13} color={COLORS.textMuted} />
             </View>
           )}
-          <Text style={styles.navLabel}>Profile</Text>
+          <Text style={styles.navLabel}>{t('profile')}</Text>
         </TouchableOpacity>
       </View>
     </View>

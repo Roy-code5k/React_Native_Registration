@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function CompetitionTabs({ description, judgingParameters = [], rules = [], eligibility = [] }) {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState('about'); // 'about' | 'judging' | 'rules'
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -17,7 +19,7 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
           activeOpacity={0.7}
         >
           <Text style={[styles.tabTitle, activeTab === 'about' && styles.tabTitleActive]}>
-            About Competition
+            {t('tabs.about')}
           </Text>
           {activeTab === 'about' && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
@@ -28,7 +30,7 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
           activeOpacity={0.7}
         >
           <Text style={[styles.tabTitle, activeTab === 'judging' && styles.tabTitleActive]}>
-            Judging Parameters
+            {t('tabs.judging')}
           </Text>
           {activeTab === 'judging' && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
@@ -39,7 +41,7 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
           activeOpacity={0.7}
         >
           <Text style={[styles.tabTitle, activeTab === 'rules' && styles.tabTitleActive]}>
-            Rules & Eligibility
+            {t('tabs.rules')}
           </Text>
           {activeTab === 'rules' && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
@@ -52,20 +54,28 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
           <View>
             <Text style={styles.descriptionText} numberOfLines={isExpanded ? undefined : 3}>
               {description ||
-                'This is an online classical dance competition open for all age groups. Participate from anywhere and showcase your talent. Express your passion through traditional dance.'}
+                (language === 'HI'
+                  ? 'यह सभी आयु समूहों के लिए खुली एक ऑनलाइन शास्त्रीय नृत्य प्रतियोगिता है।'
+                  : 'This is an online classical dance competition open for all age groups.')}
             </Text>
 
             {isExpanded && (
               <View style={styles.moreAboutContainer}>
-                <Text style={styles.moreAboutTitle}>Competition Highlights:</Text>
+                <Text style={styles.moreAboutTitle}>{t('tabs.highlightsTitle')}</Text>
                 <Text style={styles.moreAboutText}>
-                  • Official Certificate of Merit signed by Guru Manju Dubey.
+                  {language === 'HI'
+                    ? '• गुरु मंजू दुबे द्वारा हस्ताक्षरित आधिकारिक योग्यता प्रमाण पत्र।'
+                    : '• Official Certificate of Merit signed by Guru Manju Dubey.'}
                 </Text>
                 <Text style={styles.moreAboutText}>
-                  • Direct constructive video feedback for all participants.
+                  {language === 'HI'
+                    ? '• सभी प्रतिभागियों के लिए सीधा रचनात्मक वीडियो फीडबैक।'
+                    : '• Direct constructive video feedback for all participants.'}
                 </Text>
                 <Text style={styles.moreAboutText}>
-                  • Cash prize distribution direct to bank account via Razorpay within 48 hours of result announcement.
+                  {language === 'HI'
+                    ? '• परिणाम घोषणा के 48 घंटों के भीतर सीधे बैंक खाते में नकद पुरस्कार।'
+                    : '• Cash prize distribution direct to bank account via Razorpay within 48 hours of result announcement.'}
                 </Text>
               </View>
             )}
@@ -76,7 +86,7 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
               activeOpacity={0.7}
             >
               <Text style={styles.viewMoreText}>
-                {isExpanded ? 'View less' : 'View more'}
+                {isExpanded ? t('tabs.viewLess') : t('tabs.viewMore')}
               </Text>
               <Ionicons
                 name={isExpanded ? 'chevron-up' : 'chevron-down'}
@@ -110,7 +120,7 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
         {/* Rules & Eligibility Tab */}
         {activeTab === 'rules' && (
           <View style={styles.rulesContainer}>
-            <Text style={styles.subHeader}>Official Rules:</Text>
+            <Text style={styles.subHeader}>{t('tabs.officialRules')}</Text>
             {rules.map((rule, idx) => (
               <View key={idx} style={styles.bulletRow}>
                 <Text style={styles.bullet}>•</Text>
@@ -118,7 +128,7 @@ export default function CompetitionTabs({ description, judgingParameters = [], r
               </View>
             ))}
 
-            <Text style={[styles.subHeader, { marginTop: 14 }]}>Eligibility Criteria:</Text>
+            <Text style={[styles.subHeader, { marginTop: 14 }]}>{t('tabs.eligibilityCriteria')}</Text>
             {eligibility.map((el, idx) => (
               <View key={idx} style={styles.bulletRow}>
                 <Text style={styles.bullet}>✔</Text>

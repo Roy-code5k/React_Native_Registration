@@ -1,15 +1,32 @@
 import axios from 'axios';
-import { Platform } from 'react-native';
+import { Platform, NativeModules } from 'react-native';
 
-// On physical mobile device over Wi-Fi, connect to computer's local IP (10.20.18.138)
-const getDefaultBaseUrl = () => {
+// Dynamically determine the API base URL
+const getBaseUrl = () => {
+  // 1. Web browser: Always use localhost to bypass local IP & CORS issues
   if (Platform.OS === 'web') {
     return 'http://localhost:5000/api/v1';
   }
-  return 'http://10.20.18.138:5000/api/v1';
+
+  // 2. Physical Mobile / Emulator: Automatically extract active host IP from Metro scriptURL
+  // This automatically updates whenever your computer's Wi-Fi IP changes!
+  try {
+    const scriptURL = NativeModules?.SourceCode?.scriptURL;
+    if (scriptURL) {
+      const host = scriptURL.split('://')[1]?.split(':')[0];
+      if (host && host !== 'localhost' && host !== '127.0.0.1') {
+        return `http://${host}:5000/api/v1`;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not auto-detect host IP:', err.message);
+  }
+
+  // 3. Fallback to environment variable or active local IP
+  return process.env.EXPO_PUBLIC_API_URL || 'http://10.20.18.72:5000/api/v1';
 };
 
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || getDefaultBaseUrl();
+export const API_BASE_URL = getBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -19,12 +36,13 @@ const api = axios.create({
   },
 });
 
-export const getCompetitionDetails = async (id = 'classical-dance-2026', token = null) => {
+export const getCompetitionDetails = async (id = 'classical-dance-2026', token = null, lang = 'en') => {
   const headers = {};
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await api.get(`/competitions/${id}`, { headers });
+  const cleanLang = (lang || 'en').toLowerCase();
+  const response = await api.get(`/competitions/${id}?lang=${cleanLang}`, { headers });
   return response.data.data;
 };
 
@@ -40,9 +58,11 @@ export const submitEntry = async (id, payload, token) => {
   return response.data;
 };
 
-export const listAllCompetitions = async () => {
-  const response = await api.get('/competitions');
-  return response.data.data;
+export const listAllCompetitions = async (lang = 'en') => {
+  const cleanLang = (lang || 'en').toLowerCase();
+  const response = await api.get(`/competitions?lang=${cleanLang}`);
+  const payload = response.data?.data;
+  return Array.isArray(payload) ? payload : (payload?.competitions || []);
 };
 
 export const registerUser = async (name, email, password) => {

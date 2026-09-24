@@ -7,7 +7,7 @@ class CompetitionService {
   /**
    * Fetch competition with computed user state and lifecycle
    */
-  async getCompetitionDetails(idOrSlug, userId = null) {
+  async getCompetitionDetails(idOrSlug, userId = null, lang = 'en') {
     let competition;
     if (mongoose.Types.ObjectId.isValid(idOrSlug)) {
       competition = await Competition.findById(idOrSlug);
@@ -66,15 +66,62 @@ class CompetitionService {
       subWindowOpen &&
       submissionStatus === 'NOT_SUBMITTED';
 
+    const isHi = (lang || '').toLowerCase().startsWith('hi');
+    const hi = isHi ? competition.translations?.hi : null;
+
+    const title = hi?.title || competition.title;
+    const category = hi?.category || competition.category;
+    const certificateText = hi?.certificateText || competition.certificateText;
+    const description = hi?.description || competition.description;
+    const rules = hi?.rules && hi.rules.length > 0 ? hi.rules : competition.rules;
+    const eligibility = hi?.eligibility && hi.eligibility.length > 0 ? hi.eligibility : competition.eligibility;
+
+    let judge = competition.judge;
+    if (hi?.judge) {
+      judge = {
+        name: hi.judge.name || competition.judge.name,
+        designation: hi.judge.designation || competition.judge.designation,
+        experience: hi.judge.experience || competition.judge.experience,
+        image: competition.judge.image,
+        introVideo: competition.judge.introVideo,
+      };
+    }
+
+    let judgingParameters = competition.judgingParameters;
+    if (hi?.judgingParameters && hi.judgingParameters.length > 0) {
+      judgingParameters = competition.judgingParameters.map((param, idx) => {
+        const hiParam = hi.judgingParameters[idx];
+        return {
+          name: hiParam?.name || param.name,
+          weight: param.weight,
+          description: hiParam?.description || param.description,
+        };
+      });
+    }
+
+    let rewards = competition.rewards;
+    if (hi?.rewards && hi.rewards.length > 0) {
+      rewards = competition.rewards.map((rew, idx) => {
+        const hiRew = hi.rewards.find((r) => r.position === rew.position) || hi.rewards[idx];
+        return {
+          position: rew.position,
+          title: hiRew?.title || rew.title,
+          amount: rew.amount,
+          icon: rew.icon,
+        };
+      });
+    }
+
     return {
       id: competition._id,
       slug: competition.slug,
-      title: competition.title,
-      category: competition.category,
+      title,
+      category,
       tags: competition.tags,
-      certificateText: competition.certificateText,
+      certificateText,
       prizePool: competition.prizePool,
       entryFee: competition.entryFee,
+      lang: isHi ? 'hi' : 'en',
       participants: {
         current: competition.participantCount,
         maximum: competition.maxParticipants,
@@ -88,13 +135,13 @@ class CompetitionService {
         submissionEndsAt: competition.submissionEndsAt,
         resultDate: competition.resultDate,
       },
-      judge: competition.judge,
+      judge,
       previousWinners: competition.previousWinners,
-      description: competition.description,
-      judgingParameters: competition.judgingParameters,
-      rules: competition.rules,
-      eligibility: competition.eligibility,
-      rewards: competition.rewards,
+      description,
+      judgingParameters,
+      rules,
+      eligibility,
+      rewards,
       meta: competition.meta,
       userState: {
         isAuthenticated: !!userId,
@@ -297,20 +344,24 @@ class CompetitionService {
   /**
    * List all competitions (for switching / browsing)
    */
-  async listCompetitions() {
+  async listCompetitions(lang = 'en') {
+    const isHi = (lang || '').toLowerCase().startsWith('hi');
     const comps = await Competition.find().sort({ createdAt: -1 });
-    return comps.map((c) => ({
-      id: c._id,
-      slug: c.slug,
-      title: c.title,
-      category: c.category,
-      lifecycle: c.getLifecycleState(),
-      spotsRemaining: Math.max(0, c.maxParticipants - c.participantCount),
-      participantCount: c.participantCount,
-      maxParticipants: c.maxParticipants,
-      entryFee: c.entryFee,
-      prizePool: c.prizePool,
-    }));
+    return comps.map((c) => {
+      const hi = isHi ? c.translations?.hi : null;
+      return {
+        id: c._id,
+        slug: c.slug,
+        title: hi?.title || c.title,
+        category: hi?.category || c.category,
+        lifecycle: c.getLifecycleState(),
+        spotsRemaining: Math.max(0, c.maxParticipants - c.participantCount),
+        participantCount: c.participantCount,
+        maxParticipants: c.maxParticipants,
+        entryFee: c.entryFee,
+        prizePool: c.prizePool,
+      };
+    });
   }
 }
 

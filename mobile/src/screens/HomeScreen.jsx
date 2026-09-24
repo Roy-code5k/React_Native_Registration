@@ -13,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 import { listAllCompetitions } from '../services/api';
 
 export default function HomeScreen({
@@ -23,7 +24,9 @@ export default function HomeScreen({
   onNavigateExplore,
 }) {
   const [selectedFilter, setSelectedFilter] = useState('ALL');
+  const { language, setLanguage, t } = useLanguage();
 
+  const langParam = language === 'HI' ? 'hi' : 'en';
   const {
     data: competitions = [],
     isLoading,
@@ -31,8 +34,8 @@ export default function HomeScreen({
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ['competitions'],
-    queryFn: listAllCompetitions,
+    queryKey: ['competitions', language],
+    queryFn: () => listAllCompetitions(langParam),
   });
 
   // Filter competitions
@@ -47,7 +50,7 @@ export default function HomeScreen({
   const getStatusBadge = (lifecycle, spotsRemaining, participantCount, maxParticipants) => {
     if (spotsRemaining === 0 || (maxParticipants > 0 && participantCount >= maxParticipants)) {
       return {
-        text: 'Capacity Full',
+        text: language === 'HI' ? 'स्थान भर चुके हैं' : 'Capacity Full',
         bg: '#FEE2E2',
         color: '#DC2626',
         icon: 'alert-circle',
@@ -56,35 +59,35 @@ export default function HomeScreen({
     switch (lifecycle) {
       case 'REGISTRATION_OPEN':
         return {
-          text: 'Registration Open',
+          text: language === 'HI' ? '🟢 पंजीकरण खुला है' : 'Registration Open',
           bg: '#DCFCE7',
           color: '#16A34A',
           icon: 'radio-button-on',
         };
       case 'SUBMISSION_OPEN':
         return {
-          text: 'Submissions Open',
+          text: language === 'HI' ? '🟡 सबमिशन खुले हैं' : 'Submissions Open',
           bg: '#FEF3C7',
           color: '#D97706',
           icon: 'cloud-upload-outline',
         };
       case 'RESULT_PUBLISHED':
         return {
-          text: 'Results Published',
+          text: language === 'HI' ? '🟣 परिणाम घोषित' : 'Results Published',
           bg: '#F3E8FF',
           color: '#7E22CE',
           icon: 'trophy',
         };
       case 'JUDGING':
         return {
-          text: 'Under Judging',
+          text: language === 'HI' ? 'निर्णायक प्रक्रिया जारी' : 'Under Judging',
           bg: '#E0F2FE',
           color: '#0284C7',
           icon: 'eye-outline',
         };
       default:
         return {
-          text: 'Registration Closed',
+          text: language === 'HI' ? 'पंजीकरण समाप्त' : 'Registration Closed',
           bg: '#F3F4F6',
           color: '#6B7280',
           icon: 'time-outline',
@@ -107,26 +110,46 @@ export default function HomeScreen({
             </View>
             <View>
               <Text style={styles.brandTitle}>Feedants</Text>
-              <Text style={styles.brandSubtitle}>Online Talent Competitions</Text>
+              <Text style={styles.brandSubtitle}>{t('homeScreen.tagline')}</Text>
             </View>
           </View>
 
-          {/* User Auth Chip */}
-          {currentUser ? (
-            <TouchableOpacity style={styles.userChip} onPress={onNavigateProfile} activeOpacity={0.8}>
-              <View style={styles.avatarPlaceholder}>
-                <Ionicons name="person" size={13} color={COLORS.primary} />
-              </View>
-              <Text style={styles.userNameText} numberOfLines={1}>
-                {currentUser.name?.split(' ')[0] || 'Profile'}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.loginBtn} onPress={onNavigateAuth} activeOpacity={0.8}>
-              <Ionicons name="log-in-outline" size={16} color={COLORS.primary} />
-              <Text style={styles.loginBtnText}>Log In</Text>
-            </TouchableOpacity>
-          )}
+          <View style={styles.headerRightRow}>
+            {/* Language Toggle */}
+            <View style={styles.langToggle}>
+              <TouchableOpacity
+                style={[styles.langBtn, language === 'ENG' && styles.langBtnActive]}
+                onPress={() => setLanguage('ENG')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.langText, language === 'ENG' && styles.langTextActive]}>ENG</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.langBtn, language === 'HI' && styles.langBtnActive]}
+                onPress={() => setLanguage('HI')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.langText, language === 'HI' && styles.langTextActive]}>हिंदी</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* User Auth Chip */}
+            {currentUser ? (
+              <TouchableOpacity style={styles.userChip} onPress={onNavigateProfile} activeOpacity={0.8}>
+                <View style={styles.avatarPlaceholder}>
+                  <Ionicons name="person" size={13} color={COLORS.primary} />
+                </View>
+                <Text style={styles.userNameText} numberOfLines={1}>
+                  {currentUser.name?.split(' ')[0] || t('profile')}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={styles.loginBtn} onPress={onNavigateAuth} activeOpacity={0.8}>
+                <Ionicons name="log-in-outline" size={16} color={COLORS.primary} />
+                <Text style={styles.loginBtnText}>{t('auth.logIn')}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Hero Banner */}
@@ -134,17 +157,21 @@ export default function HomeScreen({
           <View style={styles.heroContent}>
             <View style={styles.featuredBadge}>
               <Ionicons name="sparkles" size={12} color="#D97706" />
-              <Text style={styles.featuredBadgeText}>FEATURED EVENT</Text>
+              <Text style={styles.featuredBadgeText}>{t('homeScreen.featured')}</Text>
             </View>
-            <Text style={styles.heroTitle}>Feedants Classical Dance 2026</Text>
+            <Text style={styles.heroTitle}>
+              {language === 'HI' ? 'फीडेंट्स शास्त्रीय नृत्य 2026' : 'Feedants Classical Dance 2026'}
+            </Text>
             <Text style={styles.heroSubtitle}>
-              Judged by Professional Kathak Dancer Manju Dubey. Guaranteed certificate & rewards!
+              {language === 'HI'
+                ? 'प्रसिद्ध कथक नृत्यांगना गुरु मंजू दुबे द्वारा मूल्यांकित। गारंटीकृत प्रमाणपत्र एवं नकद पुरस्कार!'
+                : 'Judged by Professional Kathak Dancer Manju Dubey. Guaranteed certificate & rewards!'}
             </Text>
             <Pressable
               style={styles.heroBtn}
               onPress={() => onSelectCompetition('classical-dance-2026')}
             >
-              <Text style={styles.heroBtnText}>View Details & Register</Text>
+              <Text style={styles.heroBtnText}>{t('homeScreen.viewDetails')}</Text>
               <Ionicons name="arrow-forward" size={16} color={COLORS.white} />
             </Pressable>
           </View>
@@ -152,13 +179,13 @@ export default function HomeScreen({
 
         {/* Section Heading & Filter Tabs */}
         <View style={styles.filterSection}>
-          <Text style={styles.sectionTitle}>Browse Competitions</Text>
+          <Text style={styles.sectionTitle}>{t('homeScreen.browseCompetitions')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
             {[
-              { id: 'ALL', label: 'All Events' },
-              { id: 'OPEN', label: '🟢 Open' },
-              { id: 'SUBMISSION', label: '🟡 Submissions' },
-              { id: 'COMPLETED', label: '🟣 Results Out' },
+              { id: 'ALL', label: t('homeScreen.allEvents') },
+              { id: 'OPEN', label: t('homeScreen.open') },
+              { id: 'SUBMISSION', label: t('homeScreen.submissions') },
+              { id: 'COMPLETED', label: t('homeScreen.results') },
             ].map((tab) => (
               <TouchableOpacity
                 key={tab.id}
@@ -183,14 +210,14 @@ export default function HomeScreen({
         {isLoading ? (
           <View style={styles.loadingBox}>
             <ActivityIndicator size="large" color={COLORS.primary} />
-            <Text style={styles.loadingText}>Loading live competitions...</Text>
+            <Text style={styles.loadingText}>{t('fetchingDetails')}</Text>
           </View>
         ) : isError ? (
           <View style={styles.errorBox}>
             <Ionicons name="alert-circle-outline" size={32} color={COLORS.danger} />
-            <Text style={styles.errorTitle}>Could not load competitions</Text>
+            <Text style={styles.errorTitle}>{t('failedLoad')}</Text>
             <TouchableOpacity style={styles.retryBtn} onPress={refetch}>
-              <Text style={styles.retryBtnText}>Retry</Text>
+              <Text style={styles.retryBtnText}>{t('retry')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -231,20 +258,22 @@ export default function HomeScreen({
                   {/* Pricing / Prize Metrics */}
                   <View style={styles.metricsRow}>
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Prize Pool</Text>
+                      <Text style={styles.metricLabel}>{t('prizePool')}</Text>
                       <Text style={styles.prizeValue}>₹ {comp.prizePool?.toLocaleString('en-IN')}</Text>
                     </View>
                     <View style={styles.divider} />
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Entry Fee</Text>
+                      <Text style={styles.metricLabel}>{t('entryFee')}</Text>
                       <Text style={styles.feeValue}>₹ {comp.entryFee}</Text>
                     </View>
                     {comp.lifecycle === 'REGISTRATION_OPEN' && (
                       <>
                         <View style={styles.divider} />
                         <View style={styles.metricItem}>
-                          <Text style={styles.metricLabel}>Spots Left</Text>
-                          <Text style={styles.spotsValue}>{spotsRemaining} spots</Text>
+                          <Text style={styles.metricLabel}>{t('spotsLeft', { count: '' }).replace(/^[^\w\u0900-\u097F]+/, '')}</Text>
+                          <Text style={styles.spotsValue}>
+                            {spotsRemaining > 0 ? t('spotsLeft', { count: spotsRemaining }) : t('allSpotsFilled')}
+                          </Text>
                         </View>
                       </>
                     )}
@@ -265,7 +294,7 @@ export default function HomeScreen({
                         />
                       </View>
                       <Text style={styles.bookedText}>
-                        {currentBooked} / {maxSpots} Booked
+                        {t('booked', { current: currentBooked, max: maxSpots })}
                       </Text>
                     </View>
                   )}
@@ -274,8 +303,8 @@ export default function HomeScreen({
                   <View style={styles.cardFooter}>
                     <Text style={styles.viewDetailsText}>
                       {comp.lifecycle === 'REGISTRATION_OPEN' && spotsRemaining > 0
-                        ? 'View Details & Register'
-                        : 'View Details'}
+                        ? t('homeScreen.viewDetails')
+                        : language === 'HI' ? 'विवरण देखें' : 'View Details'}
                     </Text>
                     <Ionicons name="chevron-forward" size={16} color={COLORS.primary} />
                   </View>
@@ -292,7 +321,7 @@ export default function HomeScreen({
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navItem} activeOpacity={0.8}>
           <Ionicons name="home" size={20} color={COLORS.primary} />
-          <Text style={[styles.navLabel, styles.navLabelActive]}>Home</Text>
+          <Text style={[styles.navLabel, styles.navLabelActive]}>{t('home')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -301,7 +330,7 @@ export default function HomeScreen({
           activeOpacity={0.8}
         >
           <Ionicons name="search-outline" size={20} color={COLORS.textMuted} />
-          <Text style={styles.navLabel}>Explore</Text>
+          <Text style={styles.navLabel}>{t('explore')}</Text>
         </TouchableOpacity>
 
         <View style={styles.centerAddButton}>
@@ -316,14 +345,14 @@ export default function HomeScreen({
           activeOpacity={0.8}
         >
           <Ionicons name="trophy-outline" size={20} color={COLORS.textMuted} />
-          <Text style={styles.navLabel}>Competitions</Text>
+          <Text style={styles.navLabel}>{t('competitions')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={onNavigateProfile} activeOpacity={0.8}>
           <View style={styles.navAvatarPlaceholder}>
             <Ionicons name="person" size={13} color={COLORS.textMuted} />
           </View>
-          <Text style={styles.navLabel}>Profile</Text>
+          <Text style={styles.navLabel}>{t('profile')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -375,6 +404,35 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.textMuted,
     fontWeight: '500',
+  },
+  headerRightRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  langToggle: {
+    flexDirection: 'row',
+    backgroundColor: '#F1F5F9',
+    borderRadius: 16,
+    padding: 2,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  langBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 14,
+  },
+  langBtnActive: {
+    backgroundColor: COLORS.primary,
+  },
+  langText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  langTextActive: {
+    color: COLORS.white,
   },
   userChip: {
     flexDirection: 'row',

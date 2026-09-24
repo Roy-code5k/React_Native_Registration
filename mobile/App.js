@@ -3,6 +3,7 @@ import { StyleSheet, View, LogBox } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CompetitionDetailsScreen from './src/screens/CompetitionDetailsScreen';
+import { LanguageProvider } from './src/context/LanguageContext';
 import { COLORS } from './src/constants/theme';
 
 // Ignore known upstream react-native-web internal deprecation notices
@@ -43,10 +44,12 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <View style={styles.container}>
-        <StatusBar style="dark" />
-        <CompetitionDetailsScreen />
-      </View>
+      <LanguageProvider>
+        <View style={styles.container}>
+          <StatusBar style="dark" />
+          <CompetitionDetailsScreen />
+        </View>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

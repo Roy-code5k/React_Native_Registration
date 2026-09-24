@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 import {
   getCompetitionDetails,
   registerForCompetition,
@@ -42,6 +43,7 @@ import ExploreScreen from './ExploreScreen';
 
 export default function CompetitionDetailsScreen() {
   const queryClient = useQueryClient();
+  const { language, t } = useLanguage();
 
   // Navigation view: 'home' | 'competition' | 'profile' | 'auth'
   const [currentView, setCurrentView] = useState('competition');
@@ -92,6 +94,7 @@ export default function CompetitionDetailsScreen() {
   };
 
   // Dynamic Query for Competition Details
+  const langParam = language === 'HI' ? 'hi' : 'en';
   const {
     data: competition,
     isLoading,
@@ -100,8 +103,8 @@ export default function CompetitionDetailsScreen() {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ['competition', competitionSlug, authToken],
-    queryFn: () => getCompetitionDetails(competitionSlug, authToken),
+    queryKey: ['competition', competitionSlug, authToken, language],
+    queryFn: () => getCompetitionDetails(competitionSlug, authToken, langParam),
     staleTime: 5000,
   });
 
@@ -254,7 +257,7 @@ export default function CompetitionDetailsScreen() {
     return (
       <SafeAreaView style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingText}>Fetching Competition Details...</Text>
+        <Text style={styles.loadingText}>{t('fetchingDetails')}</Text>
       </SafeAreaView>
     );
   }
@@ -263,12 +266,12 @@ export default function CompetitionDetailsScreen() {
   if (isError && !competition) {
     return (
       <SafeAreaView style={styles.centerContainer}>
-        <Text style={styles.errorTitle}>Failed to load competition</Text>
+        <Text style={styles.errorTitle}>{t('failedLoad')}</Text>
         <Text style={styles.errorMessage}>
           {error?.response?.data?.error?.message || error?.message || 'Server connection error'}
         </Text>
         <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
-          <Text style={styles.retryButtonText}>Retry</Text>
+          <Text style={styles.retryButtonText}>{t('retry')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );

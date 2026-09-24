@@ -3,15 +3,17 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { useCountdown } from '../hooks/useCountdown';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function CountdownCard({ registrationEndsAt, lifecycleState }) {
+  const { t } = useLanguage();
   const { formattedString, isExpired } = useCountdown(registrationEndsAt);
 
   if (lifecycleState === 'REGISTRATION_CLOSED' || lifecycleState === 'FULL' || isExpired) {
     return (
       <View style={[styles.banner, styles.closedBanner]}>
         <Ionicons name="time-outline" size={16} color={COLORS.danger} />
-        <Text style={styles.closedText}>Registration has ended for this round</Text>
+        <Text style={styles.closedText}>{t('countdown.closed')}</Text>
       </View>
     );
   }
@@ -20,14 +22,14 @@ export default function CountdownCard({ registrationEndsAt, lifecycleState }) {
     <View style={styles.banner}>
       <View style={styles.left}>
         <Ionicons name="hourglass-outline" size={16} color={COLORS.primary} />
-        <Text style={styles.label}>Registration closes in</Text>
+        <Text style={styles.label}>{t('countdown.registrationClosesIn')}</Text>
       </View>
 
       <Text style={styles.timerText}>{formattedString}</Text>
 
       <View style={styles.right}>
         <Ionicons name="stopwatch-outline" size={15} color={COLORS.primary} />
-        <Text style={styles.hurryText}>Hurry up!</Text>
+        <Text style={styles.hurryText}>{t('countdown.hurryUp')}</Text>
       </View>
     </View>
   );

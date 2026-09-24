@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function CompetitionHeader({ competition, isRegistered }) {
+  const { t } = useLanguage();
   if (!competition) return null;
 
   const currentBooked = competition.participants?.current ?? 0;
@@ -23,11 +25,11 @@ export default function CompetitionHeader({ competition, isRegistered }) {
         {isRegistered ? (
           <View style={styles.registeredBadge}>
             <Ionicons name="checkmark-circle" size={15} color={COLORS.primary} />
-            <Text style={styles.registeredText}>Registered</Text>
+            <Text style={styles.registeredText}>{t('registered')}</Text>
           </View>
         ) : spotsLeft === 0 && isRegistrationOpen ? (
           <View style={styles.fullBadge}>
-            <Text style={styles.fullText}>Full</Text>
+            <Text style={styles.fullText}>{t('full')}</Text>
           </View>
         ) : null}
       </View>
@@ -52,13 +54,13 @@ export default function CompetitionHeader({ competition, isRegistered }) {
       <View style={styles.statsContainer}>
         {/* Prize Pool */}
         <View style={styles.statColumn}>
-          <Text style={styles.statLabel}>Prize Pool</Text>
+          <Text style={styles.statLabel}>{t('prizePool')}</Text>
           <Text style={styles.prizeValue}>₹ {competition.prizePool?.toLocaleString('en-IN')}</Text>
         </View>
 
         {/* Entry Fee */}
         <View style={styles.statColumn}>
-          <Text style={styles.statLabel}>Entry Fee</Text>
+          <Text style={styles.statLabel}>{t('entryFee')}</Text>
           <Text style={styles.feeValue}>₹ {competition.entryFee}</Text>
         </View>
 
@@ -68,7 +70,9 @@ export default function CompetitionHeader({ competition, isRegistered }) {
             <View style={styles.spotsHeader}>
               <Ionicons name="people-outline" size={14} color={COLORS.primary} />
               <Text style={styles.spotsLeftText}>
-                {spotsLeft > 0 ? `Only ${spotsLeft} spots left` : 'All spots filled'}
+                {spotsLeft > 0
+                  ? t('spotsLeft', { count: spotsLeft })
+                  : t('allSpotsFilled')}
               </Text>
             </View>
 
@@ -83,7 +87,7 @@ export default function CompetitionHeader({ competition, isRegistered }) {
             </View>
 
             <Text style={styles.bookedText}>
-              {currentBooked} / {maxSpots} Booked
+              {t('booked', { current: currentBooked, max: maxSpots })}
             </Text>
           </View>
         ) : (
@@ -101,10 +105,10 @@ export default function CompetitionHeader({ competition, isRegistered }) {
             />
             <Text style={styles.statusClosedText}>
               {competition.lifecycle?.state === 'RESULT_PUBLISHED'
-                ? 'Results Published'
+                ? t('sticky.viewResults')
                 : competition.lifecycle?.state === 'SUBMISSION_OPEN'
-                ? 'Submissions Open'
-                : 'Registration Closed'}
+                ? t('sticky.uploadSubmission')
+                : t('sticky.registrationClosed')}
             </Text>
           </View>
         )}

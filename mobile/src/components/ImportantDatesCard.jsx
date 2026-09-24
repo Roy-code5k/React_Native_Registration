@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 const formatDateTime = (dateString, fallbackDate = '10 Aug 26', fallbackTime = '11:50 PM') => {
   if (!dateString) return { date: fallbackDate, time: fallbackTime };
@@ -30,6 +31,7 @@ const formatDateTime = (dateString, fallbackDate = '10 Aug 26', fallbackTime = '
 };
 
 export default function ImportantDatesCard({ lifecycle }) {
+  const { t } = useLanguage();
   const regEnd = formatDateTime(lifecycle?.registrationEndsAt, '10 Aug 26', '11:50 PM');
   const subStart = formatDateTime(lifecycle?.submissionStartsAt, '6 Aug 26', '04:00 AM');
   const subEnd = formatDateTime(lifecycle?.submissionEndsAt, '30 Aug 26', '11:55 PM');
@@ -37,7 +39,7 @@ export default function ImportantDatesCard({ lifecycle }) {
 
   return (
     <View style={styles.sectionContainer}>
-      <Text style={styles.sectionTitle}>Important Dates</Text>
+      <Text style={styles.sectionTitle}>{t('dates.importantDates')}</Text>
 
       <View style={styles.card}>
         {/* Row 1 */}
@@ -48,7 +50,7 @@ export default function ImportantDatesCard({ lifecycle }) {
               <Ionicons name="calendar-outline" size={20} color={COLORS.primary} />
             </View>
             <View style={styles.cellContent}>
-              <Text style={styles.cellLabel}>Register Before</Text>
+              <Text style={styles.cellLabel}>{t('dates.registerBefore')}</Text>
               <Text style={styles.cellDate}>{regEnd.date}</Text>
               <Text style={styles.cellTime}>{regEnd.time}</Text>
             </View>
@@ -60,7 +62,7 @@ export default function ImportantDatesCard({ lifecycle }) {
               <Feather name="send" size={18} color={COLORS.primary} />
             </View>
             <View style={styles.cellContent}>
-              <Text style={styles.cellLabel}>Submission Starts</Text>
+              <Text style={styles.cellLabel}>{t('dates.submissionStarts')}</Text>
               <Text style={styles.cellDate}>{subStart.date}</Text>
               <Text style={styles.cellTime}>{subStart.time}</Text>
             </View>
@@ -78,7 +80,7 @@ export default function ImportantDatesCard({ lifecycle }) {
               <Feather name="upload" size={19} color={COLORS.primary} />
             </View>
             <View style={styles.cellContent}>
-              <Text style={styles.cellLabel}>Submission Ends</Text>
+              <Text style={styles.cellLabel}>{t('dates.submissionEnds')}</Text>
               <Text style={styles.cellDate}>{subEnd.date}</Text>
               <Text style={styles.cellTime}>{subEnd.time}</Text>
             </View>
@@ -90,7 +92,7 @@ export default function ImportantDatesCard({ lifecycle }) {
               <Ionicons name="trophy-outline" size={20} color={COLORS.primary} />
             </View>
             <View style={styles.cellContent}>
-              <Text style={styles.cellLabel}>Result Date</Text>
+              <Text style={styles.cellLabel}>{t('dates.resultsDate')}</Text>
               <Text style={styles.cellDate}>{resDate.date}</Text>
               <Text style={styles.cellTime}>{resDate.time}</Text>
             </View>

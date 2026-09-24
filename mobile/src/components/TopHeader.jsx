@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function TopHeader({ onGoBack }) {
-  const [lang, setLang] = useState('ENG');
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -15,26 +16,26 @@ export default function TopHeader({ onGoBack }) {
           activeOpacity={0.7}
         >
           <Ionicons name="arrow-back" size={20} color={COLORS.textDark} />
-          <Text style={styles.backText}>Go back</Text>
+          <Text style={styles.backText}>{t('goBack')}</Text>
         </TouchableOpacity>
 
         <View style={styles.langContainer}>
           <TouchableOpacity
-            style={[styles.langPill, lang === 'ENG' && styles.langPillActive]}
-            onPress={() => setLang('ENG')}
+            style={[styles.langPill, language === 'ENG' && styles.langPillActive]}
+            onPress={() => setLanguage('ENG')}
             activeOpacity={0.8}
           >
-            <Text style={[styles.langText, lang === 'ENG' && styles.langTextActive]}>
+            <Text style={[styles.langText, language === 'ENG' && styles.langTextActive]}>
               ENG
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.langPill, lang === 'HI' && styles.langPillActive]}
-            onPress={() => setLang('HI')}
+            style={[styles.langPill, language === 'HI' && styles.langPillActive]}
+            onPress={() => setLanguage('HI')}
             activeOpacity={0.8}
           >
-            <Text style={[styles.langText, lang === 'HI' && styles.langTextActive]}>
+            <Text style={[styles.langText, language === 'HI' && styles.langTextActive]}>
               हिंदी
             </Text>
           </TouchableOpacity>

@@ -7,8 +7,9 @@ exports.getCompetition = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user ? req.user._id : null;
+    const lang = req.query.lang || req.headers['accept-language'] || 'en';
 
-    const data = await competitionService.getCompetitionDetails(id, userId);
+    const data = await competitionService.getCompetitionDetails(id, userId, lang);
 
     res.status(200).json({
       success: true,
@@ -21,7 +22,8 @@ exports.getCompetition = async (req, res, next) => {
 
 exports.listCompetitions = async (req, res, next) => {
   try {
-    const list = await competitionService.listCompetitions();
+    const lang = req.query.lang || req.headers['accept-language'] || 'en';
+    const list = await competitionService.listCompetitions(lang);
     res.status(200).json({
       success: true,
       data: list,

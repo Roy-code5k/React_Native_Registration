@@ -129,6 +129,33 @@ const competitionSchema = new mongoose.Schema(
         default: 'Only contributions from paid participants will be considered for judging.',
       },
     },
+    translations: {
+      hi: {
+        title: { type: String },
+        category: { type: String },
+        certificateText: { type: String },
+        description: { type: String },
+        rules: [{ type: String }],
+        eligibility: [{ type: String }],
+        judge: {
+          name: { type: String },
+          designation: { type: String },
+          experience: { type: String },
+        },
+        judgingParameters: [
+          {
+            name: { type: String },
+            description: { type: String },
+          },
+        ],
+        rewards: [
+          {
+            position: { type: Number },
+            title: { type: String },
+          },
+        ],
+      },
+    },
   },
   {
     timestamps: true,

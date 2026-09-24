@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 import { listAllCompetitions } from '../services/api';
 
 export default function ExploreScreen({
@@ -23,6 +24,7 @@ export default function ExploreScreen({
   onNavigateCompetitions,
   currentUser,
 }) {
+  const { language, t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef(null);
 
@@ -34,14 +36,15 @@ export default function ExploreScreen({
     return () => clearTimeout(timer);
   }, []);
 
+  const langParam = language === 'HI' ? 'hi' : 'en';
   const {
     data: competitions = [],
     isLoading,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ['competitions'],
-    queryFn: listAllCompetitions,
+    queryKey: ['competitions', language],
+    queryFn: () => listAllCompetitions(langParam),
   });
 
   const popularTags = [
@@ -106,7 +109,7 @@ export default function ExploreScreen({
           <TextInput
             ref={inputRef}
             style={styles.searchInput}
-            placeholder="Search competitions, categories, judges..."
+            placeholder={t('homeScreen.searchPlaceholder')}
             placeholderTextColor={COLORS.textLight}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -123,7 +126,7 @@ export default function ExploreScreen({
         </View>
 
         <TouchableOpacity style={styles.cancelBtn} onPress={onNavigateHome} activeOpacity={0.7}>
-          <Text style={styles.cancelBtnText}>Cancel</Text>
+          <Text style={styles.cancelBtnText}>{language === 'HI' ? 'रद्द करें' : 'Cancel'}</Text>
         </TouchableOpacity>
       </View>
 
@@ -134,7 +137,9 @@ export default function ExploreScreen({
       >
         {/* Popular Tags Pills */}
         <View style={styles.popularTagsSection}>
-          <Text style={styles.popularLabel}>Popular searches:</Text>
+          <Text style={styles.popularLabel}>
+            {language === 'HI' ? 'लोकप्रिय खोजें:' : 'Popular searches:'}
+          </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tagsRow}>
             {popularTags.map((tag) => {
               const isActive = searchQuery.toLowerCase() === tag.toLowerCase();
@@ -155,7 +160,9 @@ export default function ExploreScreen({
         {/* Results Header */}
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsCount}>
-            {isLoading ? 'Searching...' : `${searchResults.length} competition${searchResults.length === 1 ? '' : 's'} found`}
+            {isLoading
+              ? (language === 'HI' ? 'खोज जारी है...' : 'Searching...')
+              : (language === 'HI' ? `${searchResults.length} प्रतियोगिताएं उपलब्ध` : `${searchResults.length} competition${searchResults.length === 1 ? '' : 's'} found`)}
           </Text>
         </View>
 
@@ -163,7 +170,7 @@ export default function ExploreScreen({
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={COLORS.primary} />
-            <Text style={styles.loadingText}>Fetching search results...</Text>
+            <Text style={styles.loadingText}>{t('fetchingDetails')}</Text>
           </View>
         ) : searchResults.length === 0 ? (
           /* Empty Search State */
@@ -171,12 +178,18 @@ export default function ExploreScreen({
             <View style={styles.emptyIconCircle}>
               <Ionicons name="search-outline" size={36} color={COLORS.textMuted} />
             </View>
-            <Text style={styles.emptyTitle}>No matching competitions</Text>
+            <Text style={styles.emptyTitle}>
+              {language === 'HI' ? 'कोई मेल खाती प्रतियोगिता नहीं मिली' : 'No matching competitions'}
+            </Text>
             <Text style={styles.emptySubtitle}>
-              We couldn't find anything matching "{searchQuery}". Try searching for "Dance", "Kathak", or "Open".
+              {language === 'HI'
+                ? `"${searchQuery}" से संबंधित कोई प्रतियोगिता नहीं मिली। "Dance" या "Kathak" खोज कर देखें।`
+                : `We couldn't find anything matching "${searchQuery}". Try searching for "Dance", "Kathak", or "Open".`}
             </Text>
             <TouchableOpacity style={styles.viewAllBtn} onPress={() => setSearchQuery('')} activeOpacity={0.8}>
-              <Text style={styles.viewAllBtnText}>Show All Competitions</Text>
+              <Text style={styles.viewAllBtnText}>
+                {language === 'HI' ? 'सभी प्रतियोगिताएं देखें' : 'Show All Competitions'}
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -213,20 +226,22 @@ export default function ExploreScreen({
                   {/* Pricing / Entry metrics */}
                   <View style={styles.metricsRow}>
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Prize Pool</Text>
+                      <Text style={styles.metricLabel}>{t('prizePool')}</Text>
                       <Text style={styles.prizeValue}>₹ {comp.prizePool?.toLocaleString('en-IN')}</Text>
                     </View>
                     <View style={styles.divider} />
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Entry Fee</Text>
+                      <Text style={styles.metricLabel}>{t('entryFee')}</Text>
                       <Text style={styles.feeValue}>₹ {comp.entryFee}</Text>
                     </View>
                     {isRegOpen && (
                       <>
                         <View style={styles.divider} />
                         <View style={styles.metricItem}>
-                          <Text style={styles.metricLabel}>Spots Left</Text>
-                          <Text style={styles.spotsValue}>{spotsRemaining} spots</Text>
+                          <Text style={styles.metricLabel}>{t('spotsLeft', { count: '' }).replace(/^[^\w\u0900-\u097F]+/, '')}</Text>
+                          <Text style={styles.spotsValue}>
+                            {spotsRemaining > 0 ? t('spotsLeft', { count: spotsRemaining }) : t('allSpotsFilled')}
+                          </Text>
                         </View>
                       </>
                     )}
@@ -247,7 +262,7 @@ export default function ExploreScreen({
                         />
                       </View>
                       <Text style={styles.bookedText}>
-                        {currentBooked} / {maxSpots} Booked
+                        {t('booked', { current: currentBooked, max: maxSpots })}
                       </Text>
                     </View>
                   )}
@@ -255,7 +270,9 @@ export default function ExploreScreen({
                   {/* Footer Link */}
                   <View style={styles.cardFooter}>
                     <Text style={styles.cardActionText}>
-                      {isRegOpen && spotsRemaining > 0 ? 'View & Register' : 'View Details'}
+                      {isRegOpen && spotsRemaining > 0
+                        ? (language === 'HI' ? 'विवरण एवं पंजीकरण' : 'View & Register')
+                        : (language === 'HI' ? 'विवरण देखें' : 'View Details')}
                     </Text>
                     <Ionicons name="chevron-forward" size={15} color={COLORS.primary} />
                   </View>
@@ -272,13 +289,13 @@ export default function ExploreScreen({
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navItem} onPress={onNavigateHome} activeOpacity={0.8}>
           <Ionicons name="home-outline" size={20} color={COLORS.textMuted} />
-          <Text style={styles.navLabel}>Home</Text>
+          <Text style={styles.navLabel}>{t('home')}</Text>
         </TouchableOpacity>
 
         {/* Explore is Active */}
         <TouchableOpacity style={styles.navItem} activeOpacity={0.8}>
           <Ionicons name="search" size={20} color={COLORS.primary} />
-          <Text style={[styles.navLabel, styles.navLabelActive]}>Explore</Text>
+          <Text style={[styles.navLabel, styles.navLabelActive]}>{t('explore')}</Text>
         </TouchableOpacity>
 
         <View style={styles.centerAddButton}>
@@ -293,14 +310,14 @@ export default function ExploreScreen({
           activeOpacity={0.8}
         >
           <Ionicons name="trophy-outline" size={20} color={COLORS.textMuted} />
-          <Text style={styles.navLabel}>Competitions</Text>
+          <Text style={styles.navLabel}>{t('competitions')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={onNavigateProfile} activeOpacity={0.8}>
           <View style={styles.navAvatarPlaceholder}>
             <Ionicons name="person" size={13} color={COLORS.textMuted} />
           </View>
-          <Text style={styles.navLabel}>Profile</Text>
+          <Text style={styles.navLabel}>{t('profile')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

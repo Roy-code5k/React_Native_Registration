@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function JudgeCard({ judge, onWatchIntro }) {
+  const { t } = useLanguage();
   if (!judge) return null;
 
   return (
@@ -15,7 +17,7 @@ export default function JudgeCard({ judge, onWatchIntro }) {
       />
 
       <View style={styles.info}>
-        <Text style={styles.label}>Judge</Text>
+        <Text style={styles.label}>{t('judgeLabel')}</Text>
         <Text style={styles.name}>{judge.name}</Text>
         <Text style={styles.designation}>{judge.designation}</Text>
         <Text style={styles.experience}>{judge.experience}</Text>
@@ -23,13 +25,13 @@ export default function JudgeCard({ judge, onWatchIntro }) {
 
       <TouchableOpacity
         style={styles.videoAction}
-        onPress={() => onWatchIntro && onWatchIntro(judge.introVideo || 'https://www.w3schools.com/html/mov_bbb.mp4', `${judge.name} - Intro Video`)}
+        onPress={() => onWatchIntro && onWatchIntro(judge.introVideo || 'https://www.w3schools.com/html/mov_bbb.mp4', `${judge.name} - ${t('introVideo')}`)}
         activeOpacity={0.7}
       >
         <View style={styles.playButtonCircle}>
           <Ionicons name="play" size={20} color={COLORS.primary} style={{ marginLeft: 2 }} />
         </View>
-        <Text style={styles.videoLabel}>Intro Video</Text>
+        <Text style={styles.videoLabel}>{t('introVideo')}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function RewardsList({ rewards = [] }) {
+  const { t } = useLanguage();
   if (!rewards || rewards.length === 0) return null;
 
   const renderIcon = (pos) => {
@@ -22,8 +24,8 @@ export default function RewardsList({ rewards = [] }) {
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Rewards</Text>
-        <Text style={styles.subTitle}>(All Positions)</Text>
+        <Text style={styles.title}>{t('rewardsSection.title')}</Text>
+        <Text style={styles.subTitle}>{t('rewardsSection.allPositions')}</Text>
       </View>
 
       <View style={styles.list}>
