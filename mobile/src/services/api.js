@@ -23,7 +23,7 @@ const getBaseUrl = () => {
   }
 
   // 3. Fallback to environment variable or active local IP
-  return process.env.EXPO_PUBLIC_API_URL || 'http://10.20.18.72:5000/api/v1';
+  return process.env.EXPO_PUBLIC_API_URL || 'http://10.110.156.174:5000/api/v1';
 };
 
 export const API_BASE_URL = getBaseUrl();
