@@ -119,12 +119,6 @@ The backend runs on **port 5000** and connects to MongoDB Atlas.
 
 To make evaluating all edge cases effortless, the app features an **Interactive Demo Toolbar** pinned at the top:
 
-| User | Email | Password | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Demo Participant** | `demo@example.com` | `password123` | Pre-registered (test the **Video Submission** modal flow) |
-| **Pooja Sharma** | `pooja@example.com` | `password123` | Unregistered (test the **Live Spot Reservation & Capacity Counter**) |
-| **Guest** | *None* | *None* | Unauthenticated participant (prompts Auth modal on CTA click) |
-
 - **Lifecycle Switcher**: 1-click buttons to cycle the active competition between:
   - `🟢 Open`: Spots available, countdown active, "Register Now (₹99)".
   - `🔴 Full`: Capacity filled (20/20), CTA disabled with "Competition Full".
