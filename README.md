@@ -1,4 +1,4 @@
-# Feedants Competition Details — Full-Stack Mobile & Web Module
+# Feedants Competition Details  Full-Stack Mobile & Web Module
 
 [![Backend Status](https://img.shields.io/badge/Backend-Express%20%2B%20MongoDB%20Atlas-0F6B72.svg)](http://localhost:5000)
 [![Mobile Client](https://img.shields.io/badge/Mobile-React%20Native%20(Expo)-149389.svg)](http://localhost:8081)
@@ -6,8 +6,7 @@
 [![Tests](https://img.shields.io/badge/Concurrency%20Tests-Passing%20(100%25)-10B981.svg)](./server/tests/concurrency.test.js)
 
 A production-grade, functional full-stack MVP of the **Feedants Competition Details** screen built for the Full Stack Development Internship technical evaluation.
-
-This is **not a static UI clone** — every single component, statistic, judge profile, countdown target, participant spot, and reward tier is dynamically retrieved from a Node.js/Express API and backed by live MongoDB persistence with atomic concurrency controls, live search, and dynamic full-stack English/Hindi localization.
+Every single component, statistic, judge profile, countdown target, participant spot, and reward tier is dynamically retrieved from a Node.js/Express API and backed by live MongoDB persistence with atomic concurrency controls, live search, and dynamic full-stack English/Hindi localization.
 
 ---
 
