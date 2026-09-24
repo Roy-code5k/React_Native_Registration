@@ -18,6 +18,7 @@ export default function ProfileScreen({
   onGoBack,
   onNavigateCompetitions,
   onNavigateHome,
+  onNavigateExplore,
 }) {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -127,7 +128,7 @@ export default function ProfileScreen({
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} onPress={onNavigateCompetitions} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.navItem} onPress={onNavigateExplore} activeOpacity={0.7}>
           <Ionicons name="search-outline" size={20} color={COLORS.textMuted} />
           <Text style={styles.navLabel}>Explore</Text>
         </TouchableOpacity>

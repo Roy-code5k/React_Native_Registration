@@ -10,6 +10,7 @@ export default function CompetitionHeader({ competition, isRegistered }) {
   const maxSpots = competition.participants?.maximum ?? 20;
   const spotsLeft = competition.participants?.remaining ?? (maxSpots - currentBooked);
   const progressRatio = Math.min(1, Math.max(0, currentBooked / (maxSpots || 1)));
+  const isRegistrationOpen = competition.lifecycle?.state === 'REGISTRATION_OPEN';
 
   return (
     <View style={styles.card}>
@@ -24,7 +25,7 @@ export default function CompetitionHeader({ competition, isRegistered }) {
             <Ionicons name="checkmark-circle" size={15} color={COLORS.primary} />
             <Text style={styles.registeredText}>Registered</Text>
           </View>
-        ) : spotsLeft === 0 ? (
+        ) : spotsLeft === 0 && isRegistrationOpen ? (
           <View style={styles.fullBadge}>
             <Text style={styles.fullText}>Full</Text>
           </View>
@@ -61,29 +62,52 @@ export default function CompetitionHeader({ competition, isRegistered }) {
           <Text style={styles.feeValue}>₹ {competition.entryFee}</Text>
         </View>
 
-        {/* Spots & Progress */}
-        <View style={styles.spotsColumn}>
-          <View style={styles.spotsHeader}>
-            <Ionicons name="people-outline" size={14} color={COLORS.primary} />
-            <Text style={styles.spotsLeftText}>
-              {spotsLeft > 0 ? `Only ${spotsLeft} spots left` : 'All spots filled'}
+        {/* Spots & Progress - only displayed when registrations are open */}
+        {isRegistrationOpen ? (
+          <View style={styles.spotsColumn}>
+            <View style={styles.spotsHeader}>
+              <Ionicons name="people-outline" size={14} color={COLORS.primary} />
+              <Text style={styles.spotsLeftText}>
+                {spotsLeft > 0 ? `Only ${spotsLeft} spots left` : 'All spots filled'}
+              </Text>
+            </View>
+
+            {/* Progress Bar Track */}
+            <View style={styles.progressBarTrack}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  { width: `${Math.round(progressRatio * 100)}%` },
+                ]}
+              />
+            </View>
+
+            <Text style={styles.bookedText}>
+              {currentBooked} / {maxSpots} Booked
             </Text>
           </View>
-
-          {/* Progress Bar Track */}
-          <View style={styles.progressBarTrack}>
-            <View
-              style={[
-                styles.progressBarFill,
-                { width: `${Math.round(progressRatio * 100)}%` },
-              ]}
+        ) : (
+          <View style={styles.statusClosedBadge}>
+            <Ionicons
+              name={
+                competition.lifecycle?.state === 'RESULT_PUBLISHED'
+                  ? 'trophy-outline'
+                  : competition.lifecycle?.state === 'SUBMISSION_OPEN'
+                  ? 'cloud-upload-outline'
+                  : 'time-outline'
+              }
+              size={13}
+              color={COLORS.textMuted}
             />
+            <Text style={styles.statusClosedText}>
+              {competition.lifecycle?.state === 'RESULT_PUBLISHED'
+                ? 'Results Published'
+                : competition.lifecycle?.state === 'SUBMISSION_OPEN'
+                ? 'Submissions Open'
+                : 'Registration Closed'}
+            </Text>
           </View>
-
-          <Text style={styles.bookedText}>
-            {currentBooked} / {maxSpots} Booked
-          </Text>
-        </View>
+        )}
       </View>
     </View>
   );
@@ -230,5 +254,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.textMuted,
     fontWeight: '500',
+  },
+  statusClosedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  statusClosedText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.textMuted,
   },
 });

@@ -12,6 +12,7 @@ export default function StickyBottomActionBar({
   onNavigateProfile,
   onNavigateCompetitions,
   onNavigateHome,
+  onNavigateExplore,
 }) {
   const isRegistered = userState?.isRegistered;
   const submissionStatus = userState?.submissionStatus;
@@ -118,7 +119,7 @@ export default function StickyBottomActionBar({
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.navItem} onPress={onNavigateExplore} activeOpacity={0.7}>
           <Ionicons name="search-outline" size={20} color={COLORS.textMuted} />
           <Text style={styles.navLabel}>Explore</Text>
         </TouchableOpacity>

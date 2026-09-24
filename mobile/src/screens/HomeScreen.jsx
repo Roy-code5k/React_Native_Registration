@@ -20,6 +20,7 @@ export default function HomeScreen({
   onSelectCompetition,
   onNavigateProfile,
   onNavigateAuth,
+  onNavigateExplore,
 }) {
   const [selectedFilter, setSelectedFilter] = useState('ALL');
 
@@ -238,30 +239,36 @@ export default function HomeScreen({
                       <Text style={styles.metricLabel}>Entry Fee</Text>
                       <Text style={styles.feeValue}>₹ {comp.entryFee}</Text>
                     </View>
-                    <View style={styles.divider} />
-                    <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Spots Left</Text>
-                      <Text style={styles.spotsValue}>{spotsRemaining} spots</Text>
-                    </View>
+                    {comp.lifecycle === 'REGISTRATION_OPEN' && (
+                      <>
+                        <View style={styles.divider} />
+                        <View style={styles.metricItem}>
+                          <Text style={styles.metricLabel}>Spots Left</Text>
+                          <Text style={styles.spotsValue}>{spotsRemaining} spots</Text>
+                        </View>
+                      </>
+                    )}
                   </View>
 
-                  {/* Spots Progress Bar */}
-                  <View style={styles.progressBarWrapper}>
-                    <View style={styles.progressBarTrack}>
-                      <View
-                        style={[
-                          styles.progressBarFill,
-                          {
-                            width: `${Math.round(progressRatio * 100)}%`,
-                            backgroundColor: spotsRemaining === 0 ? COLORS.danger : COLORS.primary,
-                          },
-                        ]}
-                      />
+                  {/* Spots Progress Bar - only displayed when registrations are open */}
+                  {comp.lifecycle === 'REGISTRATION_OPEN' && (
+                    <View style={styles.progressBarWrapper}>
+                      <View style={styles.progressBarTrack}>
+                        <View
+                          style={[
+                            styles.progressBarFill,
+                            {
+                              width: `${Math.round(progressRatio * 100)}%`,
+                              backgroundColor: spotsRemaining === 0 ? COLORS.danger : COLORS.primary,
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text style={styles.bookedText}>
+                        {currentBooked} / {maxSpots} Booked
+                      </Text>
                     </View>
-                    <Text style={styles.bookedText}>
-                      {currentBooked} / {maxSpots} Booked
-                    </Text>
-                  </View>
+                  )}
 
                   {/* Card Footer CTA */}
                   <View style={styles.cardFooter}>
@@ -290,7 +297,7 @@ export default function HomeScreen({
 
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => onSelectCompetition('classical-dance-2026')}
+          onPress={onNavigateExplore}
           activeOpacity={0.8}
         >
           <Ionicons name="search-outline" size={20} color={COLORS.textMuted} />

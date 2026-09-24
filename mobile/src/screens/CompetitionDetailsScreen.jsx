@@ -38,6 +38,7 @@ import DemoToolbar from '../components/DemoToolbar';
 import ProfileScreen from './ProfileScreen';
 import AuthScreen from './AuthScreen';
 import HomeScreen from './HomeScreen';
+import ExploreScreen from './ExploreScreen';
 
 export default function CompetitionDetailsScreen() {
   const queryClient = useQueryClient();
@@ -200,6 +201,26 @@ export default function CompetitionDetailsScreen() {
         }}
         onNavigateProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
         onNavigateAuth={() => setCurrentView('auth')}
+        onNavigateExplore={() => setCurrentView('explore')}
+      />
+    );
+  }
+
+  // Explore / Search View
+  if (currentView === 'explore') {
+    return (
+      <ExploreScreen
+        currentUser={currentUser}
+        onSelectCompetition={(slug) => {
+          setCompetitionSlug(slug);
+          setCurrentView('competition');
+        }}
+        onNavigateHome={() => setCurrentView('home')}
+        onNavigateProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
+        onNavigateCompetitions={() => {
+          setCompetitionSlug('classical-dance-2026');
+          setCurrentView('competition');
+        }}
       />
     );
   }
@@ -213,6 +234,7 @@ export default function CompetitionDetailsScreen() {
         onGoBack={() => setCurrentView('home')}
         onNavigateCompetitions={() => setCurrentView('home')}
         onNavigateHome={() => setCurrentView('home')}
+        onNavigateExplore={() => setCurrentView('explore')}
       />
     );
   }
@@ -339,6 +361,7 @@ export default function CompetitionDetailsScreen() {
         onPressAction={handleCtaPress}
         isLoading={registerMutation.isPending || submitMutation.isPending}
         onNavigateHome={() => setCurrentView('home')}
+        onNavigateExplore={() => setCurrentView('explore')}
         onNavigateProfile={() => setCurrentView(currentUser ? 'profile' : 'auth')}
         onNavigateCompetitions={() => setCurrentView('home')}
       />
